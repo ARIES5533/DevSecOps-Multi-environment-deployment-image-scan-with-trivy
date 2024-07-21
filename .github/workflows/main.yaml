@@ -50,19 +50,19 @@ jobs:
             -p 3000:3000 \
             ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
 
-      #- name: Wait for container to start
-       # run: sleep 10  # Adjust this wait time based on your container startup time
+      - name: Wait for container to start
+        run: sleep 10  # Adjust this wait time based on your container startup time
       
       - name: Run curl command
         run: curl -v http://127.0.0.1:3000
       
-      #- name: Stop Docker container
-        #run: docker stop my-node-app
+      - name: Stop Docker container
+        run: docker stop my-node-app
 
-      #- name: Push images to Docker Hub
-        #run: |
-          #docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-          #docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+      - name: Push images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
 
 
