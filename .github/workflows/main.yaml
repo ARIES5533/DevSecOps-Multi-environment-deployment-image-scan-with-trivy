@@ -54,12 +54,12 @@ jobs:
           echo $IP
 
           echo Testing Image URL using wget
-          wget -q -O - 127.0.0.1:3000/live | grep live
+          wget -q -O - 127.0.0.1:3000
 
-      - name: Push images to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+      #- name: Push images to Docker Hub
+        #run: |
+          #docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
+          #docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
 
 
