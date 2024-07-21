@@ -38,14 +38,40 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and tag Docker images
+      - name: Docker build for testing
         run: |
           docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+
+      - name: docker build testing
+        run: | 
+          docker images
+           docker run --name my-node-app -d \
+            -p 3000:3000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
+            
+          export IP=$(docker inspect -f '{{range .NetworkSetings.Networks}}{{.IPAddress}}{{end}}' my-node-app)
+          echo $IP
+
+          echo Testing Image URL using wget
+          wget -q -O - 127.0.0.1:3000/live | grep live
+
+
+
+
 
       - name: Push images to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+
+docker_build_testing:
+  run: | 
+    docker images
+    docker run --name my-node-app -d \
+      -p 3000:3000 \
+
+
+
 
 
