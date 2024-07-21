@@ -25,6 +25,6 @@ jobs:
 
       - name: Achive test result
         uses: actions/upload-artifact@v3
-          with: Aries-test-result
+          with: Mocha-test-result
           path: test-results.xml
 
