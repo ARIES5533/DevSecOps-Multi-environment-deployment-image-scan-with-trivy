@@ -56,21 +56,10 @@ jobs:
           echo Testing Image URL using wget
           wget -q -O - 127.0.0.1:3000/live | grep live
 
-
-
-
-
       - name: Push images to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
-
-docker_build_testing:
-  run: | 
-    docker images
-    docker run --name my-node-app -d \
-      -p 3000:3000 \
-
 
 
 
