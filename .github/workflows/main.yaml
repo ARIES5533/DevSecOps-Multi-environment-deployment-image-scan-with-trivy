@@ -23,3 +23,8 @@ jobs:
       - name: Run tests
         run: npm test -- --coverage --watchAll=false
 
+      - name: Achive test result
+        uses: actions/upload-artifact@v3
+          with: Aries-test-result
+          path: test-result.xml
+
