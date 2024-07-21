@@ -24,7 +24,7 @@ jobs:
         run: npm test -- --coverage --watchAll=false
 
   build:
-    name: Build and Deploy to DockerHub
+    name: Build, Test and Deploy to DockerHub
     needs: [unit_testing]
     runs-on: ubuntu-latest
 
@@ -50,8 +50,8 @@ jobs:
             -p 3000:3000 \
             ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
             
-          export IP=$(docker inspect -f '{{range .NetworkSetings.Networks}}{{.IPAddress}}{{end}}' my-node-app)
-          echo $IP
+          #export IP=$(docker inspect -f '{{range .NetworkSetings.Networks}}{{.IPAddress}}{{end}}' my-node-app)
+          #echo $IP
 
       - name: Wait for container to start
         run: sleep 10  # Adjust this wait time based on your container startup time
