@@ -25,6 +25,7 @@ jobs:
 
   build:
     name: Build and Deploy to DockerHub
+    needs: [unit_testing]
     runs-on: ubuntu-latest
 
     steps:
