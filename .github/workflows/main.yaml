@@ -53,8 +53,20 @@ jobs:
           export IP=$(docker inspect -f '{{range .NetworkSetings.Networks}}{{.IPAddress}}{{end}}' my-node-app)
           echo $IP
 
-          echo Testing Image URL using wget
-          curl 127.0.0.1:3000
+        - name: Wait for container to start
+        run: sleep 10  # Adjust this wait time based on your container startup time
+      
+      - name: Run curl command
+        run: curl -v http://127.0.0.1:3000
+      
+      - name: Stop Docker container
+        run: docker stop my-node-app
+
+
+
+
+
+
          # #curl -q -O - 127.0.0.1:3000
 
       #- name: Push images to Docker Hub
