@@ -53,7 +53,7 @@ jobs:
           export IP=$(docker inspect -f '{{range .NetworkSetings.Networks}}{{.IPAddress}}{{end}}' my-node-app)
           echo $IP
 
-        - name: Wait for container to start
+      - name: Wait for container to start
         run: sleep 10  # Adjust this wait time based on your container startup time
       
       - name: Run curl command
