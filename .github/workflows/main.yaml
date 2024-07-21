@@ -54,7 +54,7 @@ jobs:
           echo $IP
 
           echo Testing Image URL using wget
-          wget -q -O - 127.0.0.1:3000
+          curl -q -O - 127.0.0.1:3000
 
       #- name: Push images to Docker Hub
         #run: |
