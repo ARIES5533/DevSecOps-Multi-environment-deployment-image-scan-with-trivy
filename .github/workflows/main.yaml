@@ -82,7 +82,7 @@ jobs:
         
       - name: Fetch eks cluster details
         run: |
-          kubectl version --short
+          kubectl version
           echo Aries_is_live.......................
           kubectl get nodes
 
