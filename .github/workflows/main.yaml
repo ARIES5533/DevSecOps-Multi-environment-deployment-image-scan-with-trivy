@@ -64,11 +64,11 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
-    eks_dev_deploy:
-      needs: [docker_build]
-      runs-on: ubuntu-latest
+  eks_dev_deploy:
+    needs: [docker_build]
+    runs-on: ubuntu-latest
 
-      steps:
+    steps:
       - name: Check out code
         uses: actions/checkout@v2
 
