@@ -79,14 +79,6 @@ jobs:
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
-
-      - name: Install aws-iam-authenticator
-        run: |
-          wget https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/v0.6.22/aws-iam-authenticator-linux-amd64
-          chmod +x aws-iam-authenticator-linux-amd64
-          sudo mv aws-iam-authenticator-linux-amd64 /usr/local/bin/aws-iam-authenticator
-      - name: Verify installation
-        run: aws-iam-authenticator version
         
       - name: Fetch eks cluster details
         run: |
