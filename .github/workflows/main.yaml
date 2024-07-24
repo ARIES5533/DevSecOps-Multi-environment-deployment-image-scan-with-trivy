@@ -23,8 +23,8 @@ jobs:
       - name: Run tests
         run: npm test -- --coverage --watchAll=false
 
-  build:
-    name: Build, Test and Deploy to DockerHub
+  docker_build:
+    name: Build, Test & Push to DockerHub
     needs: [unit_testing]
     runs-on: ubuntu-latest
 
@@ -64,6 +64,29 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
+    eks_dev_deploy:
+      needs: [docker_build]
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: install kubectl CLI
+        uses: azure/setup-kubectl@v3
+
+      - uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{secret.KUBECONFIG}}
+        
+      - name: Fetch eks cluster details
+        run: |
+          kubectl version --short
+          echo Aries_is_live.......................
+          kubectl get nodes
+
+      
 
 
 
