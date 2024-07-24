@@ -84,7 +84,7 @@ jobs:
         run: |
           kubectl version
           echo Aries_is_live.......................
-          kubectl get nodes
+          kubectl get pods -A
 
       
 
