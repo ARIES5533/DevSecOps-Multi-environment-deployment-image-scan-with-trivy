@@ -82,7 +82,7 @@ jobs:
 
       - name: Install aws-iam-authenticator
         run: |
-          wget https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.6.22/aws-iam-authenticator
+          wget https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/tag/v0.6.22
           chmod +x aws-iam-authenticator
           sudo mv aws-iam-authenticator /usr/local/bin/
         
