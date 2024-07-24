@@ -78,7 +78,7 @@ jobs:
       - uses: azure/k8s-set-context@v4
         with:
           method: kubeconfig
-          kubeconfig: ${{secret.KUBECONFIG}}
+          kubeconfig: ${{ secrets.KUBECONFIG }}
         
       - name: Fetch eks cluster details
         run: |
