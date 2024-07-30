@@ -122,3 +122,42 @@ jobs:
         env:
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
           REPLICAS: ${{ secrets.KUBE_REPLICAS }}
+
+
+  eks_prod_deploy:
+    name: Deploy to Prod environment
+    needs: [eks_dev_deploy]
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: install kubectl CLI
+        uses: azure/setup-kubectl@v3
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Fetch eks cluster details
+        run: |
+          kubectl version
+          echo Aries_is_live.......................
+          kubectl get pods -A
+
+      - name: Deploy to EKS
+        run: |
+          # Use envsubst to replace placeholders in the manifest
+          envsubst < kubernetes/production/deployment.yaml | kubectl apply -f -
+        env:
+          NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
+          REPLICAS: ${{ secrets.KUBE_REPLICAS }}
