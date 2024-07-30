@@ -81,8 +81,9 @@ jobs:
 
       - name: Scan Docker image with Trivy
         run: |
-          trivy image ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-          trivy image ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+          echo "Scanning Docker image for vulnerabilities..."
+          trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
+          trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
   #eks_dev_deploy:
     #needs: [docker_build]
