@@ -119,6 +119,6 @@ jobs:
         run: |
           # Use envsubst to replace placeholders in the manifest
           envsubst < kubernetes/development/deployment.yaml | kubectl apply -f -
-      env:
-        NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
-        REPLICAS: ${{ secrets.KUBE_REPLICAS }}
+        env:
+          NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
+          REPLICAS: ${{ secrets.KUBE_REPLICAS }}
