@@ -80,7 +80,7 @@ jobs:
         run: |
           echo "Scanning Docker image for vulnerabilities..."
           trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-          trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+        #trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
   # docker_build:
   #   name: Build and Test
