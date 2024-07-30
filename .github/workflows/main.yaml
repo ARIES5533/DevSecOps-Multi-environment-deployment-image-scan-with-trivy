@@ -23,15 +23,13 @@ jobs:
       - name: Run tests
         run: npm test -- --coverage --watchAll=false
 
-
-
   docker_build:
-    name: Build and Test
+    name: Build, Test & Push to DockerHub
     needs: [unit_testing]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Login to Docker Hub
@@ -40,29 +38,31 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build Docker Image
+      - name: Docker build for testing
         run: |
           docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
-      - name: Verify Docker Image Build
-        run: |
+      - name: docker build testing
+        run: | 
           docker images
-          docker inspect ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-          docker inspect ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+           docker run --name my-node-app -d \
+            -p 3000:3000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
 
-      - name: Run Docker Container for Testing
-        run: |
-          docker run --name my-node-app -d -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-
-      - name: Wait for Container to Start
+      - name: Wait for container to start
         run: sleep 10  # Adjust this wait time based on your container startup time
       
-      - name: Run Curl Command to Test Application
+      - name: Run curl command
         run: curl -v http://127.0.0.1:3000
       
-      - name: Stop Docker Container
+      - name: Stop Docker container
         run: docker stop my-node-app
+
+      - name: Push images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
   trivy_scan:
     name: Scan Docker Image for Vulnerabilities
@@ -70,95 +70,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
       - name: Install Trivy
         run: |
           wget https://github.com/aquasecurity/trivy/releases/download/v0.43.0/trivy_0.43.0_Linux-64bit.deb
           sudo dpkg -i trivy_0.43.0_Linux-64bit.deb
           trivy --version  # Verify Trivy installation
 
-      - name: Run Trivy Scan
+      - name: Scan Docker image with Trivy
         run: |
           echo "Scanning Docker image for vulnerabilities..."
           trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-        #trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
-
-  # docker_build:
-  #   name: Build and Test
-  #   needs: [unit_testing]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Check out code
-  #       uses: actions/checkout@v2
-
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-  #     - name: Docker build for testing
-  #       run: |
-  #         docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-  #         docker tag ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
-
-  #     # - name: docker build testing
-  #     #   run: | 
-  #     #     docker images
-  #     #      docker run --name my-node-app -d \
-  #     #       -p 3000:3000 \
-  #     #       ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-
-  #     - name: Wait for container to start
-  #       run: sleep 10  # Adjust this wait time based on your container startup time
-      
-  #     - name: Run curl command
-  #       run: curl -v http://127.0.0.1:3000
-      
-  #     - name: Stop Docker container
-  #       run: docker stop my-node-app
-
-  # trivy_scan:
-  #   name: Scan Docker Image for Vulnerabilities
-  #   needs: [docker_build]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Check out code
-  #       uses: actions/checkout@v2
-
-  #     - name: Install Trivy
-  #       run: |
-  #         wget https://github.com/aquasecurity/trivy/releases/download/v0.43.0/trivy_0.43.0_Linux-64bit.deb
-  #         sudo dpkg -i trivy_0.43.0_Linux-64bit.deb
-  #         trivy --version  # Verify Trivy installation
-
-  #     - name: Scan Docker image with Trivy
-  #       run: |
-  #         echo "Scanning Docker image for vulnerabilities..."
-  #         trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-  #         trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
-
-  push_to_dockerhub:
-    name: Push Docker Image to Docker Hub
-    needs: [trivy_scan]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: Push Docker Image
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+          trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
   eks_dev_deploy:
     name: Deploy to EKS
-    needs: [push_to_dockerhub]
+    needs: [trivy_scan]
     runs-on: ubuntu-latest
 
     steps:
