@@ -120,8 +120,8 @@ jobs:
           # Use envsubst to replace placeholders in the manifest
           envsubst < kubernetes/development/deployment.yaml | kubectl apply -f -
         env:
-          NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
-          REPLICAS: ${{ secrets.KUBE_REPLICAS }}
+          NAMESPACE: ${{ secrets.NAMESPACE }}
+          REPLICAS: ${{ secrets.REPLICAS }}
 
 
   eks_prod_deploy:
@@ -159,5 +159,6 @@ jobs:
           # Use envsubst to replace placeholders in the manifest
           envsubst < kubernetes/production/deployment.yaml | kubectl apply -f -
         env:
-          NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
-          REPLICAS: ${{ secrets.KUBE_REPLICAS }}
+          NAMESPACE: ${{ secrets.NAMESPACE }}
+          REPLICAS: ${{ secrets.REPLICAS }}
+          
