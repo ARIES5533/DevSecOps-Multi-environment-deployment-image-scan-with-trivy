@@ -156,7 +156,7 @@ jobs:
 
       - name: Deploy to EKS
         run: |
-          # Use envsubst to replace placeholders in the manifest
+          ## Use envsubst to replace placeholders in the manifest
           envsubst < kubernetes/production/deployment.yaml | kubectl apply -f -
         env:
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
