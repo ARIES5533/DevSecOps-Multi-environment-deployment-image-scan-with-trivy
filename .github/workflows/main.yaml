@@ -86,7 +86,7 @@ jobs:
           trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
   eks_dev_deploy:
-    name: Deploy to EKS
+    name: Deploy to Dev environment
     needs: [trivy_scan]
     runs-on: ubuntu-latest
     environment: development
