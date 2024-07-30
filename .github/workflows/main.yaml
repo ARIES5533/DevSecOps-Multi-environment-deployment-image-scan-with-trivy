@@ -89,6 +89,7 @@ jobs:
     name: Deploy to EKS
     needs: [trivy_scan]
     runs-on: ubuntu-latest
+    environment: development
 
     steps:
       - name: Checkout code
