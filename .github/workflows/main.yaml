@@ -64,7 +64,8 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
-  eks_dev_deploy:
+  trivy_scan:
+    name: Scan Docker Image for Vulnerabilities
     needs: [docker_build]
     runs-on: ubuntu-latest
 
@@ -72,19 +73,38 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: install kubectl CLI
-        uses: azure/setup-kubectl@v3
-
-      - uses: azure/k8s-set-context@v4
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-        
-      - name: Fetch eks cluster details
+      - name: Install Trivy
         run: |
-          kubectl version
-          echo Aries_is_live.......................
-          kubectl get pods -A
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.43.0/trivy_0.43.0_Linux-64bit.deb
+          sudo dpkg -i trivy_0.43.0_Linux-64bit.deb
+          trivy --version  # Verify Trivy installation
+
+      - name: Scan Docker image with Trivy
+        run: |
+          trivy image ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:latest
+          trivy image ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
+
+  #eks_dev_deploy:
+    #needs: [docker_build]
+    #runs-on: ubuntu-latest
+
+    #steps:
+      #- name: Check out code
+      #  uses: actions/checkout@v2
+
+      #- name: install kubectl CLI
+        #uses: azure/setup-kubectl@v3
+
+      #- uses: azure/k8s-set-context@v4
+        #with:
+          #method: kubeconfig
+          #kubeconfig: ${{ secrets.KUBECONFIG }}
+        
+      #- name: Fetch eks cluster details
+        #run: |
+          #kubectl version
+          #echo Aries_is_live.......................
+          #kubectl get pods -A
 
       
 
