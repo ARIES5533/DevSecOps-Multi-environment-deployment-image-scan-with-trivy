@@ -99,7 +99,7 @@ jobs:
 
   eks_dev_deploy:
     name: Deploy to EKS
-    needs: [trivy_scan]
+    needs: [push_to_dockerhub]
     runs-on: ubuntu-latest
 
     steps:
