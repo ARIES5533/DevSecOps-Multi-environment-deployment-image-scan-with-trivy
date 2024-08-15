@@ -3,9 +3,13 @@ on:
     branches:
       - dev_branch
 
+    pull_request:
+      branches:
+      - main
+
 jobs: 
   unit_testing:
-    name: Test the code
+    name: Test the codes
     runs-on: ubuntu-latest
 
     steps:
