@@ -5,7 +5,7 @@ metadata:
   name: aries-app
   labels:
     app: node
-  namespace: ${NAMESPACE}
+  namespace: production
 spec:
   replicas: ${REPLICAS}
   selector:

@@ -86,6 +86,7 @@ jobs:
           trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/olumoko_image:${{ github.run_number }}
 
   eks_dev_deploy:
+    if: contains(github.ref, 'dev_branch/')
     name: Deploy to Dev environment
     needs: [trivy_scan]
     runs-on: ubuntu-latest
@@ -125,8 +126,9 @@ jobs:
 
 
   eks_prod_deploy:
+    if: github.ref = 'refs/heads/main'
     name: Deploy to Prod environment
-    needs: [eks_dev_deploy]
+    needs: [docker_build]
     runs-on: ubuntu-latest
     environment: production
 
