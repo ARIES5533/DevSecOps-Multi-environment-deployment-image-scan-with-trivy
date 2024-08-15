@@ -2,9 +2,6 @@ on:
   push:
     branches:
       - dev_branch
-
-  pull_request:
-    branches:
       - main
 
 jobs: 
