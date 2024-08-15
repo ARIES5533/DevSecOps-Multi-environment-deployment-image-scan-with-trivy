@@ -132,7 +132,7 @@ jobs:
   eks_prod_deploy:
     if: github.ref == 'refs/heads/main'
     name: Deploy to Prod environment
-    needs: [docker_build]
+    needs: trivy_scan
     runs-on: ubuntu-latest
     environment: production
 
