@@ -7,7 +7,7 @@ metadata:
     app: node
   namespace: production
 spec:
-  replicas: ${REPLICAS}
+  replicas: ${PROD_REPLICAS}
   selector:
     matchLabels:
       app: node
